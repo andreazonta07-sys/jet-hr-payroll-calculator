@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { RotateCcw, Save, Settings2 } from "lucide-react";
-import { Citta, TaxSettings } from "@/lib/types";
-import { CITTA_OPTIONS } from "@/lib/defaultSettings";
+import { TaxSettings } from "@/lib/types";
 
 interface TaxRulesEditorProps {
   settings: TaxSettings;
@@ -76,48 +75,33 @@ export default function TaxRulesEditor({ settings, onSave, onReset }: TaxRulesEd
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold text-slate-800">Addizionali Regionali e Comunali</h3>
-          <div className="mt-3 overflow-x-auto">
-            <table className="w-full min-w-[420px] text-sm">
-              <thead>
+          <h3 className="text-sm font-semibold text-slate-800">Addizionali Regionali IRPEF</h3>
+          <p className="mt-1 text-xs text-slate-500">
+            Applicata in base alla regione del comune scelto nel calcolatore.
+          </p>
+          <div className="mt-3 max-h-72 overflow-y-auto overflow-x-auto rounded-lg border border-slate-100">
+            <table className="w-full min-w-[320px] text-sm">
+              <thead className="sticky top-0 bg-white">
                 <tr className="text-left text-xs uppercase tracking-wide text-slate-400">
-                  <th className="pb-2">Città</th>
-                  <th className="pb-2">Regionale (%)</th>
-                  <th className="pb-2">Comunale (%)</th>
+                  <th className="px-3 pb-2 pt-3">Regione</th>
+                  <th className="px-3 pb-2 pt-3">Aliquota (%)</th>
                 </tr>
               </thead>
               <tbody>
-                {CITTA_OPTIONS.map((c) => (
-                  <tr key={c.value} className="border-t border-slate-100">
-                    <td className="py-2 pr-2 text-slate-700">{c.label}</td>
-                    <td className="py-2 pr-2">
+                {Object.entries(draft.addizionaliRegionali).map(([regione, rate]) => (
+                  <tr key={regione} className="border-t border-slate-100">
+                    <td className="px-3 py-2 text-slate-700">{regione}</td>
+                    <td className="px-3 py-2">
                       <input
                         type="number"
                         step={0.01}
-                        value={draft.addizionaliRegionali[c.value as Citta]}
+                        value={rate}
                         onChange={(e) =>
                           setDraft({
                             ...draft,
                             addizionaliRegionali: {
                               ...draft.addizionaliRegionali,
-                              [c.value]: Number(e.target.value) || 0,
-                            },
-                          })
-                        }
-                        className="w-24 rounded-lg border border-slate-300 px-2 py-1.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
-                      />
-                    </td>
-                    <td className="py-2">
-                      <input
-                        type="number"
-                        step={0.01}
-                        value={draft.addizionaliComunali[c.value as Citta]}
-                        onChange={(e) =>
-                          setDraft({
-                            ...draft,
-                            addizionaliComunali: {
-                              ...draft.addizionaliComunali,
-                              [c.value]: Number(e.target.value) || 0,
+                              [regione]: Number(e.target.value) || 0,
                             },
                           })
                         }
@@ -128,6 +112,33 @@ export default function TaxRulesEditor({ settings, onSave, onReset }: TaxRulesEd
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-semibold text-slate-800">Addizionali Comunali</h3>
+          <p className="mt-1 text-xs text-slate-500">
+            Eccezioni per comuni specifici. Tutti gli altri comuni usano l&apos;aliquota di default.
+          </p>
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {Object.entries(draft.addizionaliComunali).map(([comune, rate]) => (
+              <Field
+                key={comune}
+                label={`${comune} (%)`}
+                value={rate}
+                onChange={(v) =>
+                  setDraft({
+                    ...draft,
+                    addizionaliComunali: { ...draft.addizionaliComunali, [comune]: v },
+                  })
+                }
+              />
+            ))}
+            <Field
+              label="Aliquota Comunale di Default (%)"
+              value={draft.aliquotaComunaleDefault}
+              onChange={(v) => setDraft({ ...draft, aliquotaComunaleDefault: v })}
+            />
           </div>
         </div>
 

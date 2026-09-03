@@ -1,7 +1,7 @@
 "use client";
 
-import { CITTA_OPTIONS } from "@/lib/defaultSettings";
-import { CalculatorInput, Citta, TipoContratto } from "@/lib/types";
+import ComuneAutocomplete from "@/components/ComuneAutocomplete";
+import { CalculatorInput, TipoContratto } from "@/lib/types";
 
 interface CalculatorFormProps {
   input: CalculatorInput;
@@ -75,18 +75,13 @@ export default function CalculatorForm({ input, onChange }: CalculatorFormProps)
             <label htmlFor="citta" className="text-sm font-medium text-slate-700">
               Residenza / Comune
             </label>
-            <select
-              id="citta"
-              value={input.citta}
-              onChange={(e) => patch({ citta: e.target.value as Citta })}
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
-            >
-              {CITTA_OPTIONS.map((c) => (
-                <option key={c.value} value={c.value}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
+            <div className="mt-2">
+              <ComuneAutocomplete
+                id="citta"
+                value={input.citta}
+                onChange={(citta) => patch({ citta })}
+              />
+            </div>
           </div>
 
           <div>

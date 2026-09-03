@@ -1,3 +1,4 @@
+import { findComune } from "./comuni";
 import { CalculationResult, CalculatorInput, TaxSettings } from "./types";
 
 /**
@@ -59,8 +60,9 @@ export function calcolaBustaPaga(input: CalculatorInput, settings: TaxSettings):
   const detrazioniLavoro = calcolaDetrazioniLavoro(imponibileIrpef, settings);
   const irpefNetta = Math.max(irpefLorda - detrazioniLavoro, 0);
 
-  const aliquotaRegionale = settings.addizionaliRegionali[input.citta] ?? 0;
-  const aliquotaComunale = settings.addizionaliComunali[input.citta] ?? 0;
+  const regione = findComune(input.citta)?.regione;
+  const aliquotaRegionale = (regione ? settings.addizionaliRegionali[regione] : undefined) ?? 0;
+  const aliquotaComunale = settings.addizionaliComunali[input.citta] ?? settings.aliquotaComunaleDefault;
   const addizionaleRegionale = (imponibileIrpef * aliquotaRegionale) / 100;
   const addizionaleComunale = (imponibileIrpef * aliquotaComunale) / 100;
 

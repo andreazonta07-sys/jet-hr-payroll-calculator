@@ -14,10 +14,26 @@ export const DEFAULT_TAX_SETTINGS: TaxSettings = {
     { upTo: Infinity, rate: 43 },
   ],
   addizionaliRegionali: {
-    Milano: 1.23,
-    Roma: 1.73,
-    Torino: 1.62,
-    Bologna: 1.33,
+    Abruzzo: 1.73,
+    Basilicata: 1.23,
+    Calabria: 1.73,
+    Campania: 1.73,
+    "Emilia-Romagna": 1.33,
+    "Friuli-Venezia Giulia": 1.23,
+    Lazio: 1.73,
+    Liguria: 1.23,
+    Lombardia: 1.23,
+    Marche: 1.23,
+    Molise: 1.73,
+    Piemonte: 1.62,
+    Puglia: 1.33,
+    Sardegna: 1.23,
+    Sicilia: 1.23,
+    Toscana: 1.42,
+    "Trentino-Alto Adige": 0.5,
+    Umbria: 1.23,
+    "Valle d'Aosta": 1.23,
+    Veneto: 1.23,
   },
   addizionaliComunali: {
     Milano: 0.8,
@@ -25,6 +41,7 @@ export const DEFAULT_TAX_SETTINGS: TaxSettings = {
     Torino: 0.8,
     Bologna: 0.8,
   },
+  aliquotaComunaleDefault: 0.7,
   detrazioniLavoro: {
     importoBase: 1955,
     sogliaBassa: 15000,
@@ -33,10 +50,3 @@ export const DEFAULT_TAX_SETTINGS: TaxSettings = {
   },
   costoAziendaMoltiplicatore: 1.3,
 };
-
-export const CITTA_OPTIONS = [
-  { value: "Milano", label: "Milano (Lombardia)" },
-  { value: "Roma", label: "Roma (Lazio)" },
-  { value: "Torino", label: "Torino (Piemonte)" },
-  { value: "Bologna", label: "Bologna (Emilia-Romagna)" },
-] as const;

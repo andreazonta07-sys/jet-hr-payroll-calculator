@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Calculator, Loader2 } from "lucide-react";
-import { CITTA_OPTIONS } from "@/lib/defaultSettings";
+import ComuneAutocomplete from "@/components/ComuneAutocomplete";
 import { CalculatorInput, Citta, TipoContratto } from "@/lib/types";
 
 interface IntroGateProps {
@@ -11,22 +11,13 @@ interface IntroGateProps {
 
 const CALCOLO_DELAY_MS = 1100;
 const EXIT_ANIMATION_MS = 520;
-const SLIDER_MIN = 15000;
-
-/** Il massimo dello slider si allarga progressivamente se l'utente digita un valore più alto. */
-function getSliderMax(ral: number) {
-  const base = 120000;
-  if (ral <= base) return base;
-  return Math.ceil((ral * 1.2) / 5000) * 5000;
-}
 
 export default function IntroGate({ onConfirm }: IntroGateProps) {
   const [ral, setRal] = useState(35000);
   const [tipoContratto, setTipoContratto] = useState<TipoContratto>("Tempo Indeterminato");
   const [citta, setCitta] = useState<Citta>("Milano");
+  const [mensilita, setMensilita] = useState<13 | 14>(13);
   const [status, setStatus] = useState<"idle" | "calcolo" | "closing">("idle");
-
-  const sliderMax = getSliderMax(ral);
 
   function handleConfirm() {
     if (status !== "idle") return;
@@ -38,7 +29,7 @@ export default function IntroGate({ onConfirm }: IntroGateProps) {
           ral,
           tipoContratto,
           citta,
-          mensilita: 13,
+          mensilita,
           giorniLavorati: 365,
         });
       }, EXIT_ANIMATION_MS);
@@ -77,31 +68,21 @@ export default function IntroGate({ onConfirm }: IntroGateProps) {
 
         <div className="mt-7 space-y-5">
           <div>
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-sm font-medium text-indigo-100/80">RAL Annua Lorda</span>
+            <label htmlFor="intro-ral" className="text-sm font-medium text-indigo-100/80">
+              RAL Annua Lorda
+            </label>
+            <div className="mt-2 flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 py-3 focus-within:border-indigo-400">
+              <span className="text-lg font-semibold text-indigo-100/60">€</span>
               <input
+                id="intro-ral"
                 type="number"
                 min={0}
                 step={500}
                 value={ral}
                 disabled={busy}
                 onChange={(e) => setRal(Math.max(0, Number(e.target.value) || 0))}
-                className="w-32 rounded-lg border border-white/15 bg-white/10 px-3 py-1.5 text-right text-lg font-semibold text-white tabular-nums focus:border-indigo-400 focus:outline-none disabled:opacity-50"
+                className="w-full bg-transparent text-lg font-semibold text-white tabular-nums outline-none disabled:opacity-50"
               />
-            </div>
-            <input
-              type="range"
-              min={SLIDER_MIN}
-              max={sliderMax}
-              step={500}
-              value={Math.min(Math.max(ral, SLIDER_MIN), sliderMax)}
-              disabled={busy}
-              onChange={(e) => setRal(Number(e.target.value))}
-              className="mt-3 w-full accent-indigo-400 disabled:opacity-50"
-            />
-            <div className="mt-1 flex justify-between text-xs text-indigo-100/40">
-              <span>€{SLIDER_MIN.toLocaleString("it-IT")}</span>
-              <span>€{sliderMax.toLocaleString("it-IT")}</span>
             </div>
           </div>
 
@@ -120,17 +101,25 @@ export default function IntroGate({ onConfirm }: IntroGateProps) {
             </div>
             <div>
               <label className="text-xs font-medium text-indigo-100/70">Residenza</label>
+              <div className="mt-1.5">
+                <ComuneAutocomplete
+                  value={citta}
+                  onChange={setCitta}
+                  disabled={busy}
+                  variant="dark"
+                />
+              </div>
+            </div>
+            <div className="col-span-2">
+              <label className="text-xs font-medium text-indigo-100/70">Numero Mensilità</label>
               <select
-                value={citta}
+                value={mensilita}
                 disabled={busy}
-                onChange={(e) => setCitta(e.target.value as Citta)}
+                onChange={(e) => setMensilita(Number(e.target.value) as 13 | 14)}
                 className="mt-1.5 w-full rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:outline-none disabled:opacity-50 [&>option]:text-slate-900"
               >
-                {CITTA_OPTIONS.map((c) => (
-                  <option key={c.value} value={c.value}>
-                    {c.label}
-                  </option>
-                ))}
+                <option value={13}>13 mensilità</option>
+                <option value={14}>14 mensilità</option>
               </select>
             </div>
           </div>
@@ -140,7 +129,7 @@ export default function IntroGate({ onConfirm }: IntroGateProps) {
           type="button"
           onClick={handleConfirm}
           disabled={busy}
-          className="mt-7 flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-indigo-700 shadow-lg transition-all hover:scale-[1.01] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-90"
+          className="mt-7 flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-indigo-700 shadow-lg transition-colors hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-90"
         >
           {status === "idle" && (
             <>

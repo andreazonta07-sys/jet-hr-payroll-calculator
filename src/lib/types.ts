@@ -1,4 +1,5 @@
-export type Citta = "Milano" | "Roma" | "Torino" | "Bologna";
+/** Nome del comune di residenza, scelto tramite autocomplete da src/lib/comuni.ts. */
+export type Citta = string;
 
 export type TipoContratto = "Tempo Indeterminato" | "Tempo Determinato";
 
@@ -24,8 +25,12 @@ export interface TaxSettings {
   inpsRateDipendente: number; // %
   inpsAggiuntivoDeterminato: number; // % extra per tempo determinato
   irpefScaglioni: IrpefScaglione[];
-  addizionaliRegionali: Record<Citta, number>; // %
-  addizionaliComunali: Record<Citta, number>; // %
+  /** Aliquota addizionale regionale IRPEF (%), per nome regione. */
+  addizionaliRegionali: Record<string, number>;
+  /** Eccezioni comunali curate (%), per nome comune. I comuni non presenti usano aliquotaComunaleDefault. */
+  addizionaliComunali: Record<string, number>;
+  /** Aliquota addizionale comunale (%) usata per tutti i comuni non presenti in addizionaliComunali. */
+  aliquotaComunaleDefault: number;
   detrazioniLavoro: DetrazioniLavoroParams;
   costoAziendaMoltiplicatore: number; // es. 1.30
 }
