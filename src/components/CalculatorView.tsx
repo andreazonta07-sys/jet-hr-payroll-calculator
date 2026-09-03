@@ -10,7 +10,7 @@ import RalColumnChart from "@/components/calculator/RalColumnChart";
 import ComparisonChart from "@/components/calculator/ComparisonChart";
 import BreakdownTable from "@/components/calculator/BreakdownTable";
 import PromoSection from "@/components/jethr/PromoSection";
-import { Sparkles } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
 interface CalculatorViewProps {
   initialInput: CalculatorInput;
@@ -26,8 +26,8 @@ export default function CalculatorView({ initialInput }: CalculatorViewProps) {
     <div className="space-y-8">
       <div className="animate-fade-in-up">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
-          <Sparkles className="h-3.5 w-3.5" />
-          Analisi AI completata
+          <CheckCircle2 className="h-3.5 w-3.5" />
+          Calcolo elaborato da Jet HR
         </span>
         <h1 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
           Calcolatore Busta Paga
