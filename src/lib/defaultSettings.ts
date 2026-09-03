@@ -8,6 +8,7 @@ import { TaxSettings } from "./types";
 export const DEFAULT_TAX_SETTINGS: TaxSettings = {
   inpsRateDipendente: 9.19,
   inpsAggiuntivoDeterminato: 1.4,
+  inpsRateApprendistato: 5.84,
   irpefScaglioni: [
     { upTo: 28000, rate: 23 },
     { upTo: 50000, rate: 35 },

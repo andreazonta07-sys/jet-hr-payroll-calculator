@@ -114,9 +114,8 @@ HR, senza bisogno di un team commerciale outbound.
 
 - **Banner prodotto**: headline/subheadline orientate al beneficio ("Basta calcoli manuali in Excel"), video/reel verticale placeholder (src personalizzabile in `src/components/jethr/PromoSection.tsx` → costante `JET_HR_VIDEO_SRC`)
 - **CTA primaria (lead magnet)**: "Scarica l'Ebook Gratuito: Guida al Cuneo Fiscale" → apre modale di raccolta email (`EbookModal.tsx`), pronta per essere collegata a un CRM/ESP reale
-- **CTA secondaria**: "Richiedi una Demo di Jet HR" → link diretto al sito ufficiale (`JET_HR_WEBSITE_URL`)
-- **Social proof**: badge di fiducia (valutazione clienti, aziende gestite, tempo di risposta assistenza)
-- **Footer social**: link ai canali ufficiali Jet HR (LinkedIn, Instagram, YouTube, X, Facebook)
+- **Social proof**: badge Trustpilot (4,6/5 "Eccellente", 146 recensioni, dato verificato su it.trustpilot.com/review/jethr.com) sotto la CTA primaria, più badge di fiducia (valutazione clienti, aziende gestite, tempo di risposta assistenza)
+- **Header social**: link ai canali ufficiali Jet HR (LinkedIn, Instagram, YouTube, X, Facebook), in alto nella barra di navigazione
 
 ### Strategia PLG per Jet HR
 
@@ -128,6 +127,5 @@ HR, senza bisogno di un team commerciale outbound.
 ## Personalizzazione rapida
 
 - Video promo: `src/components/jethr/PromoSection.tsx` → `JET_HR_VIDEO_SRC`
-- Link sito Jet HR: stessa constante `JET_HR_WEBSITE_URL`
 - Città supportate: `src/lib/defaultSettings.ts` → `CITTA_OPTIONS` (aggiungere anche le relative aliquote in `DEFAULT_TAX_SETTINGS`)
 - Parametri fiscali di default: `src/lib/defaultSettings.ts`

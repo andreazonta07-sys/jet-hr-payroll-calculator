@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { BookOpenCheck, MessageCircleHeart, PlayCircle, Star } from "lucide-react";
+import { useRef, useState } from "react";
+import { BookOpenCheck, MessageCircleHeart, Star, Volume2, VolumeX } from "lucide-react";
 import EbookModal from "./EbookModal";
 
 /** Personalizza qui l'URL del video/reel di presentazione Jet HR. */
-export const JET_HR_VIDEO_SRC = "https://www.jethr.com/video/demo-reel.mp4";
-export const JET_HR_WEBSITE_URL = "https://www.jethr.com";
+export const JET_HR_VIDEO_SRC = "/jethr-reel.mp4";
 
-const SOCIAL_LINKS = [
+export const SOCIAL_LINKS = [
   { label: "LinkedIn", href: "https://www.linkedin.com/company/jethr", icon: LinkedinIcon },
   { label: "Instagram", href: "https://www.instagram.com/jethr", icon: InstagramIcon },
   { label: "YouTube", href: "https://www.youtube.com/@jethr", icon: YoutubeIcon },
@@ -59,59 +58,130 @@ function FacebookIcon({ className }: { className?: string }) {
   );
 }
 
+function TrustpilotStar({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="#00b67a">
+      <path d="M12 1.5l3.09 6.26 6.91 1-5 4.87 1.18 6.87L12 17.27l-6.18 3.23L7 13.63l-5-4.87 6.91-1z" />
+    </svg>
+  );
+}
+
+/** Punteggio verificato su it.trustpilot.com/review/jethr.com. */
+function TrustpilotBadge() {
+  return (
+    <a
+      href="https://it.trustpilot.com/review/jethr.com"
+      target="_blank"
+      rel="noreferrer"
+      className="inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-white transition-colors hover:bg-white/15"
+    >
+      <div className="flex items-center gap-0.5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <TrustpilotStar key={i} className="h-4 w-4" />
+        ))}
+      </div>
+      <span className="text-sm">
+        <span className="font-semibold">Trustpilot</span> · 4,6/5 Eccellente{" "}
+        <span className="text-indigo-100">(146 recensioni)</span>
+      </span>
+    </a>
+  );
+}
+
+/**
+ * Autoplay con audio non è concesso dai browser: parte muto (unico modo
+ * garantito ovunque) e la persona può attivare l'audio col tasto speaker,
+ * che imposta un volume basso (0.35) invece del 100% di default.
+ */
+function ReelPlayer() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [muted, setMuted] = useState(true);
+
+  function toggleSound() {
+    const video = videoRef.current;
+    if (!video) return;
+    if (muted) {
+      video.volume = 0.35;
+      video.muted = false;
+      setMuted(false);
+    } else {
+      video.muted = true;
+      setMuted(true);
+    }
+  }
+
+  return (
+    <div className="relative mx-auto block aspect-[9/16] w-full max-w-[280px] overflow-hidden rounded-2xl border border-white/20 bg-slate-900 shadow-lg">
+      <video
+        ref={videoRef}
+        src={JET_HR_VIDEO_SRC}
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-900/10 via-transparent to-slate-900/85" />
+
+      <div className="absolute inset-x-0 bottom-0 p-4">
+        <p className="text-sm font-semibold leading-snug text-white">
+          🎥 Come Jet HR abbatte la burocrazia della tua azienda
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={toggleSound}
+        aria-label={muted ? "Attiva audio" : "Disattiva audio"}
+        className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60"
+      >
+        {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+      </button>
+    </div>
+  );
+}
+
 export default function PromoSection() {
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <section className="space-y-6">
       <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 p-6 text-white shadow-sm sm:p-8">
-        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="w-full max-w-[280px] mx-auto lg:mx-0">
+            <ReelPlayer />
+          </div>
+
           <div>
             <span className="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-medium">
-              Jet HR — Software HR &amp; Payroll
+              Jet HR — Meno Burocrazia, Più Impresa
             </span>
             <h2 className="mt-4 text-2xl font-semibold leading-tight sm:text-3xl">
-              Automatizza la Gestione Payroll della tua Azienda con Jet HR
+              Libera la tua Azienda dal Peso della Burocrazia
             </h2>
             <p className="mt-3 text-sm text-indigo-100 sm:text-base">
-              Basta calcoli manuali in Excel. Gestisci assunzioni, buste paga e presenze in un unico
-              software intuitivo.
+              Jet HR affianca le imprese italiane con un software payroll e HR pensato per farti
+              risparmiare tempo su assunzioni, buste paga e adempimenti: un supporto concreto, non
+              solo un tool in più.
             </p>
 
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <p className="mt-6 text-sm font-medium text-indigo-100">
+              Scopri come Jet HR risolve la burocrazia della tua azienda
+            </p>
+            <div className="mt-3 flex flex-col gap-3 sm:flex-row">
               <button
                 type="button"
                 onClick={() => setModalOpen(true)}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-indigo-700 transition-transform hover:scale-[1.02]"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-indigo-700 shadow-lg shadow-indigo-900/30 transition-transform hover:scale-[1.02]"
               >
                 <BookOpenCheck className="h-4 w-4" />
                 Scarica l&apos;Ebook Gratuito: Guida al Cuneo Fiscale
               </button>
-              <a
-                href={JET_HR_WEBSITE_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/40 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-              >
-                Richiedi una Demo di Jet HR
-              </a>
             </div>
-          </div>
 
-          <div className="mx-auto w-full max-w-[260px]">
-            <button
-              type="button"
-              className="group relative block aspect-[9/16] w-full overflow-hidden rounded-2xl border border-white/20 bg-slate-900/40 shadow-lg"
-              aria-label="Guarda il video demo"
-              data-video-src={JET_HR_VIDEO_SRC}
-            >
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-slate-900/30 to-slate-900/70 p-4 text-center">
-                <PlayCircle className="h-14 w-14 text-white transition-transform group-hover:scale-110" />
-                <p className="text-xs font-medium text-white">
-                  🎥 Guarda come Jet HR semplifica la busta paga in 60 secondi
-                </p>
-              </div>
-            </button>
+            <div className="mt-3">
+              <TrustpilotBadge />
+            </div>
           </div>
         </div>
       </div>
@@ -120,24 +190,6 @@ export default function PromoSection() {
         <TrustBadge icon={Star} label="Valutazione Clienti" value="4.9/5 ⭐" />
         <TrustBadge icon={MessageCircleHeart} label="Aziende Gestite" value="500+ 🏢" />
         <TrustBadge icon={MessageCircleHeart} label="Assistenza HR Dedicata" value="< 5 minuti 💬" />
-      </div>
-
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-        <p className="text-center text-sm font-medium text-slate-600">Seguici sui canali ufficiali Jet HR</p>
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-          {SOCIAL_LINKS.map((social) => (
-            <a
-              key={social.label}
-              href={social.href}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={social.label}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-colors hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700"
-            >
-              <social.icon className="h-5 w-5" />
-            </a>
-          ))}
-        </div>
       </div>
 
       {modalOpen && <EbookModal onClose={() => setModalOpen(false)} />}

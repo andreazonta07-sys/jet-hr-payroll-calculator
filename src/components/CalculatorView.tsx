@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type RefObject } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { calcolaBustaPaga } from "@/lib/taxEngine";
 import { CalculatorInput } from "@/lib/types";
@@ -14,10 +14,14 @@ import { CheckCircle2 } from "lucide-react";
 
 interface CalculatorViewProps {
   initialInput: CalculatorInput;
+  columnRef?: RefObject<HTMLDivElement | null>;
+  /** Se false, la colonna RAL resta a zero (in attesa del reveal della
+   * transizione); passare a true fa partire la sua animazione di crescita. */
+  chartRevealed?: boolean;
 }
 
-export default function CalculatorView({ initialInput }: CalculatorViewProps) {
-  const { settings, history } = useAppContext();
+export default function CalculatorView({ initialInput, columnRef, chartRevealed }: CalculatorViewProps) {
+  const { settings } = useAppContext();
   const [input, setInput] = useState<CalculatorInput>(initialInput);
 
   const result = useMemo(() => calcolaBustaPaga(input, settings), [input, settings]);
@@ -42,8 +46,12 @@ export default function CalculatorView({ initialInput }: CalculatorViewProps) {
         <div className="space-y-6">
           <MetricsCards result={result} />
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-            <RalColumnChart result={result} animationKey="initial" />
-            <ComparisonChart result={result} history={history} />
+            <RalColumnChart
+              result={result}
+              columnRef={columnRef}
+              revealed={chartRevealed ?? true}
+            />
+            <ComparisonChart input={input} settings={settings} />
           </div>
           <BreakdownTable result={result} />
         </div>

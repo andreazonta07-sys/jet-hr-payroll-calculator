@@ -68,6 +68,8 @@ export default function CalculatorForm({ input, onChange }: CalculatorFormProps)
             >
               <option value="Tempo Indeterminato">Tempo Indeterminato</option>
               <option value="Tempo Determinato">Tempo Determinato</option>
+              <option value="Apprendistato">Apprendistato</option>
+              <option value="Contratto a Chiamata">Contratto a Chiamata</option>
             </select>
           </div>
 

@@ -21,8 +21,8 @@ const AppContext = createContext<AppContextValue | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings, settingsHydrated] = useLocalStorage<TaxSettings>(
-    // v2: le aliquote regionali sono ora chiavate per regione (non più per le 4 città fisse)
-    "jethr:tax-settings:v2",
+    // v3: aggiunta inpsRateApprendistato (aliquota INPS ridotta per l'Apprendistato)
+    "jethr:tax-settings:v3",
     DEFAULT_TAX_SETTINGS
   );
   const [history, setHistory, historyHydrated] = useLocalStorage<HistoryRecord[]>(

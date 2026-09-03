@@ -39,7 +39,7 @@ export default function TaxRulesEditor({ settings, onSave, onReset }: TaxRulesEd
       <div className="mt-6 space-y-8">
         <div>
           <h3 className="text-sm font-semibold text-slate-800">Contributi INPS</h3>
-          <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Field
               label="Aliquota INPS Dipendente (%)"
               value={draft.inpsRateDipendente}
@@ -50,7 +50,15 @@ export default function TaxRulesEditor({ settings, onSave, onReset }: TaxRulesEd
               value={draft.inpsAggiuntivoDeterminato}
               onChange={(v) => setDraft({ ...draft, inpsAggiuntivoDeterminato: v })}
             />
+            <Field
+              label="Aliquota Apprendistato (%)"
+              value={draft.inpsRateApprendistato}
+              onChange={(v) => setDraft({ ...draft, inpsRateApprendistato: v })}
+            />
           </div>
+          <p className="mt-2 text-xs text-slate-400">
+            Il Contratto a Chiamata usa la stessa aliquota del Tempo Indeterminato (stesso trattamento previdenziale).
+          </p>
         </div>
 
         <div>

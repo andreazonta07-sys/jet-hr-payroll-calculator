@@ -1,6 +1,7 @@
 "use client";
 
 import { Calculator, LayoutDashboard, Rocket } from "lucide-react";
+import { SOCIAL_LINKS } from "@/components/jethr/PromoSection";
 
 export type ViewMode = "calcolatore" | "admin";
 
@@ -52,14 +53,20 @@ export default function Header({ view, onChangeView }: HeaderProps) {
           </button>
         </nav>
 
-        <a
-          href="https://www.jethr.com"
-          target="_blank"
-          rel="noreferrer"
-          className="hidden items-center rounded-full bg-slate-900 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-slate-800 sm:flex"
-        >
-          Richiedi Demo
-        </a>
+        <div className="hidden items-center gap-1.5 sm:flex">
+          {SOCIAL_LINKS.map((social) => (
+            <a
+              key={social.label}
+              href={social.href}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={social.label}
+              className="flex h-8 w-8 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-100 hover:text-indigo-700"
+            >
+              <social.icon className="h-4 w-4" />
+            </a>
+          ))}
+        </div>
       </div>
     </header>
   );

@@ -45,9 +45,3 @@ function seedToRecord(seed: MockSeed, index: number): HistoryRecord {
 }
 
 export const MOCK_HISTORY: HistoryRecord[] = SEEDS.map(seedToRecord);
-
-export function calcolaMediaNetto(records: HistoryRecord[]): number {
-  if (records.length === 0) return 0;
-  const totale = records.reduce((acc, r) => acc + r.result.nettoAnnuale, 0);
-  return totale / records.length;
-}

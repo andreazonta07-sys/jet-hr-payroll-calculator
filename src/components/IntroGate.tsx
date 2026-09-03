@@ -9,41 +9,36 @@ interface IntroGateProps {
   onConfirm: (input: CalculatorInput) => void;
 }
 
-const CALCOLO_DELAY_MS = 1100;
-const EXIT_ANIMATION_MS = 520;
+/** Breve delay solo per dare peso al click: la vera animazione di caricamento
+ * (percentuale, colori, morph nella colonna) è gestita da RalLoadingTransition,
+ * montata dal genitore non appena questo componente chiama onConfirm. */
+const CALCOLO_DELAY_MS = 450;
 
 export default function IntroGate({ onConfirm }: IntroGateProps) {
   const [ral, setRal] = useState(35000);
   const [tipoContratto, setTipoContratto] = useState<TipoContratto>("Tempo Indeterminato");
   const [citta, setCitta] = useState<Citta>("Milano");
   const [mensilita, setMensilita] = useState<13 | 14>(13);
-  const [status, setStatus] = useState<"idle" | "calcolo" | "closing">("idle");
+  const [status, setStatus] = useState<"idle" | "calcolo">("idle");
 
   function handleConfirm() {
     if (status !== "idle") return;
     setStatus("calcolo");
     window.setTimeout(() => {
-      setStatus("closing");
-      window.setTimeout(() => {
-        onConfirm({
-          ral,
-          tipoContratto,
-          citta,
-          mensilita,
-          giorniLavorati: 365,
-        });
-      }, EXIT_ANIMATION_MS);
+      onConfirm({
+        ral,
+        tipoContratto,
+        citta,
+        mensilita,
+        giorniLavorati: 365,
+      });
     }, CALCOLO_DELAY_MS);
   }
 
   const busy = status !== "idle";
 
   return (
-    <div
-      className={`fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950 px-4 py-10 ${
-        status === "closing" ? "animate-gate-exit" : ""
-      }`}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950 px-4 py-10">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -97,6 +92,8 @@ export default function IntroGate({ onConfirm }: IntroGateProps) {
               >
                 <option value="Tempo Indeterminato">Tempo Indeterminato</option>
                 <option value="Tempo Determinato">Tempo Determinato</option>
+                <option value="Apprendistato">Apprendistato</option>
+                <option value="Contratto a Chiamata">Contratto a Chiamata</option>
               </select>
             </div>
             <div>

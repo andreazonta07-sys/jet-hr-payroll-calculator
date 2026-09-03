@@ -46,13 +46,28 @@ function calcolaDetrazioniLavoro(imponibile: number, settings: TaxSettings): num
   return 0;
 }
 
+/**
+ * Aliquota INPS a carico del dipendente per tipo di contratto (2024,
+ * semplificato a fini dimostrativi): il Tempo Determinato paga un aggiuntivo,
+ * l'Apprendistato ha un'aliquota ridotta e sostitutiva, il Contratto a
+ * Chiamata ha lo stesso trattamento previdenziale del Tempo Indeterminato.
+ */
+function inpsRateFor(tipoContratto: CalculatorInput["tipoContratto"], settings: TaxSettings): number {
+  switch (tipoContratto) {
+    case "Apprendistato":
+      return settings.inpsRateApprendistato;
+    case "Tempo Determinato":
+      return settings.inpsRateDipendente + settings.inpsAggiuntivoDeterminato;
+    default:
+      return settings.inpsRateDipendente;
+  }
+}
+
 export function calcolaBustaPaga(input: CalculatorInput, settings: TaxSettings): CalculationResult {
   const giorniFactor = Math.min(Math.max(input.giorniLavorati, 0), 365) / 365;
   const ralEffettiva = input.ral * giorniFactor;
 
-  const inpsRate =
-    settings.inpsRateDipendente +
-    (input.tipoContratto === "Tempo Determinato" ? settings.inpsAggiuntivoDeterminato : 0);
+  const inpsRate = inpsRateFor(input.tipoContratto, settings);
   const inpsDipendente = (ralEffettiva * inpsRate) / 100;
 
   const imponibileIrpef = Math.max(ralEffettiva - inpsDipendente, 0);

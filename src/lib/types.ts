@@ -1,7 +1,7 @@
 /** Nome del comune di residenza, scelto tramite autocomplete da src/lib/comuni.ts. */
 export type Citta = string;
 
-export type TipoContratto = "Tempo Indeterminato" | "Tempo Determinato";
+export type TipoContratto = "Tempo Indeterminato" | "Tempo Determinato" | "Apprendistato" | "Contratto a Chiamata";
 
 export interface IrpefScaglione {
   /** Limite superiore dello scaglione in euro. Usare Infinity per l'ultimo scaglione. */
@@ -22,8 +22,9 @@ export interface DetrazioniLavoroParams {
 }
 
 export interface TaxSettings {
-  inpsRateDipendente: number; // %
+  inpsRateDipendente: number; // %, usata per Tempo Indeterminato e Contratto a Chiamata
   inpsAggiuntivoDeterminato: number; // % extra per tempo determinato
+  inpsRateApprendistato: number; // % sostitutiva (ridotta) per l'apprendistato
   irpefScaglioni: IrpefScaglione[];
   /** Aliquota addizionale regionale IRPEF (%), per nome regione. */
   addizionaliRegionali: Record<string, number>;
