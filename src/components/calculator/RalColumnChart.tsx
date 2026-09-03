@@ -12,7 +12,15 @@ const SEGMENTS = [
   { key: "addizionaleComunale", label: "Addizionale Comunale", color: "#8B5CF6" },
 ] as const;
 
-export default function RalColumnChart({ result }: { result: CalculationResult }) {
+const STAGGER_MS = 260;
+
+interface RalColumnChartProps {
+  result: CalculationResult;
+  /** Cambiando questa chiave il grafico si rimonta e rianima la costruzione della colonna. */
+  animationKey?: string | number;
+}
+
+export default function RalColumnChart({ result, animationKey }: RalColumnChartProps) {
   const chartData = [
     SEGMENTS.reduce<Record<string, number | string>>(
       (acc, seg) => {
@@ -24,33 +32,53 @@ export default function RalColumnChart({ result }: { result: CalculationResult }
   ];
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow duration-300 hover:shadow-md sm:p-6">
       <h3 className="text-base font-semibold text-slate-900">La Colonna della RAL</h3>
       <p className="mt-1 text-sm text-slate-500">
         Composizione al 100% della RAL: {formatEuro(result.ral)}
       </p>
 
-      <div className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-[160px_1fr]">
-        <div className="mx-auto h-72 w-full max-w-[160px]">
+      <div className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-[180px_1fr]">
+        <div className="mx-auto h-80 w-full max-w-[180px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} barCategoryGap="20%">
+            <BarChart key={animationKey} data={chartData} barCategoryGap="15%">
               <XAxis dataKey="name" hide />
               <YAxis hide domain={[0, result.ral]} />
-              <Tooltip formatter={(value) => formatEuroDecimal(Number(value))} />
-              {SEGMENTS.map((seg) => (
-                <Bar key={seg.key} dataKey={seg.key} stackId="ral" fill={seg.color} radius={0} />
+              <Tooltip
+                formatter={(value) => formatEuroDecimal(Number(value))}
+                contentStyle={{
+                  borderRadius: 12,
+                  border: "1px solid #E2E8F0",
+                  boxShadow: "0 8px 24px -8px rgba(15, 23, 42, 0.18)",
+                  fontSize: 13,
+                }}
+                cursor={{ fill: "rgba(79, 70, 229, 0.04)" }}
+              />
+              {SEGMENTS.map((seg, i) => (
+                <Bar
+                  key={seg.key}
+                  dataKey={seg.key}
+                  stackId="ral"
+                  fill={seg.color}
+                  radius={i === SEGMENTS.length - 1 ? [10, 10, 0, 0] : 0}
+                  isAnimationActive
+                  animationBegin={i * STAGGER_MS}
+                  animationDuration={700}
+                  animationEasing="ease-out"
+                />
               ))}
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         <div className="space-y-2">
-          {SEGMENTS.map((seg) => {
+          {SEGMENTS.map((seg, i) => {
             const value = result[seg.key];
             return (
               <div
                 key={seg.key}
-                className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2"
+                style={{ animationDelay: `${i * 70}ms` }}
+                className="animate-fade-in-up flex items-center justify-between gap-3 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 transition-colors hover:bg-slate-100"
               >
                 <div className="flex items-center gap-2">
                   <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: seg.color }} />
