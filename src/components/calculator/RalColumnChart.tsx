@@ -72,7 +72,7 @@ export default function RalColumnChart({ result, animationKey }: RalColumnChartP
         </div>
 
         <div className="space-y-2">
-          {SEGMENTS.map((seg, i) => {
+          {[...SEGMENTS].reverse().map((seg, i) => {
             const value = result[seg.key];
             return (
               <div
