@@ -41,7 +41,7 @@ export default function CalculatorView({ initialInput, columnRef, chartRevealed 
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[380px_1fr]">
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[380px_1fr]">
         <CalculatorForm input={input} onChange={setInput} />
         <div className="space-y-6">
           <MetricsCards result={result} />
@@ -53,9 +53,10 @@ export default function CalculatorView({ initialInput, columnRef, chartRevealed 
             />
             <ComparisonChart input={input} settings={settings} />
           </div>
-          <BreakdownTable result={result} />
         </div>
       </div>
+
+      <BreakdownTable result={result} />
 
       <PromoSection />
     </div>

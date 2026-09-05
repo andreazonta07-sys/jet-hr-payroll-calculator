@@ -120,7 +120,7 @@ export default function PromoSection() {
     <section className="space-y-6">
       <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 p-6 text-white shadow-sm sm:p-8">
         <div className="grid grid-cols-1 items-center gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="mx-auto w-full max-w-[280px] lg:ml-auto lg:mr-0">
+          <div className="mx-auto w-full max-w-[280px] lg:translate-x-10">
             <ReelPlayer />
           </div>
 
@@ -128,7 +128,7 @@ export default function PromoSection() {
             <h2 className="text-3xl font-semibold leading-tight sm:text-4xl">
               Libera la tua Azienda dal Peso della Burocrazia
             </h2>
-            <p className="mt-3 text-base text-indigo-100 sm:text-lg">
+            <p className="mt-3 text-base leading-relaxed text-indigo-100 sm:text-lg sm:leading-loose">
               Jet HR affianca le imprese italiane con un software payroll e HR pensato per farti
               risparmiare tempo su assunzioni, buste paga e adempimenti: un supporto concreto, non
               solo un tool in più.
