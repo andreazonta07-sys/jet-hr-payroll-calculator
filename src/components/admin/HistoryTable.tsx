@@ -5,6 +5,13 @@ import { AlertTriangle, Download, Search, Trash2 } from "lucide-react";
 import { HistoryRecord, TipoContratto } from "@/lib/types";
 import { formatEuro } from "@/lib/taxEngine";
 
+function formatDateTime(createdAt: string | number | Date) {
+  return new Date(createdAt).toLocaleString("it-IT", {
+    dateStyle: "short",
+    timeStyle: "short",
+  });
+}
+
 interface HistoryTableProps {
   history: HistoryRecord[];
   onDelete: (id: string) => void;
@@ -27,7 +34,7 @@ export default function HistoryTable({ history, onDelete }: HistoryTableProps) {
 
   function exportCsv() {
     const header = [
-      "Data",
+      "Data e Ora",
       "RAL",
       "Tipo Contratto",
       "Città",
@@ -39,7 +46,7 @@ export default function HistoryTable({ history, onDelete }: HistoryTableProps) {
       "Simulato",
     ];
     const rows = filtered.map((r) => [
-      new Date(r.createdAt).toLocaleDateString("it-IT"),
+      formatDateTime(r.createdAt),
       r.ral,
       r.tipoContratto,
       r.citta,
@@ -105,7 +112,7 @@ export default function HistoryTable({ history, onDelete }: HistoryTableProps) {
         <table className="w-full min-w-[720px] text-sm">
           <thead>
             <tr className="text-left text-xs uppercase tracking-wide text-slate-400">
-              <th className="pb-2">Data</th>
+              <th className="pb-2">Data e Ora</th>
               <th className="pb-2">RAL</th>
               <th className="pb-2">Contratto</th>
               <th className="pb-2">Città</th>
@@ -117,7 +124,7 @@ export default function HistoryTable({ history, onDelete }: HistoryTableProps) {
           <tbody>
             {filtered.map((r) => (
               <tr key={r.id} className="border-t border-slate-100">
-                <td className="py-2.5 pr-2 text-slate-500">{new Date(r.createdAt).toLocaleDateString("it-IT")}</td>
+                <td className="py-2.5 pr-2 text-slate-500">{formatDateTime(r.createdAt)}</td>
                 <td className="py-2.5 pr-2 font-medium text-slate-800">{formatEuro(r.ral)}</td>
                 <td className="py-2.5 pr-2 text-slate-600">{r.tipoContratto}</td>
                 <td className="py-2.5 pr-2 text-slate-600">{r.citta}</td>
