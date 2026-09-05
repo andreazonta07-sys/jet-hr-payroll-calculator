@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RotateCcw, Save, Settings2 } from "lucide-react";
+import { Plus, RotateCcw, Save, Settings2 } from "lucide-react";
 import { TaxSettings } from "@/lib/types";
 
 interface TaxRulesEditorProps {
@@ -13,6 +13,10 @@ interface TaxRulesEditorProps {
 export default function TaxRulesEditor({ settings, onSave, onReset }: TaxRulesEditorProps) {
   const [draft, setDraft] = useState<TaxSettings>(settings);
   const [saved, setSaved] = useState(false);
+  const [newRegione, setNewRegione] = useState("");
+  const [newRegioneRate, setNewRegioneRate] = useState(0);
+  const [newComune, setNewComune] = useState("");
+  const [newComuneRate, setNewComuneRate] = useState(0);
 
   function handleSave() {
     onSave(draft);
@@ -24,6 +28,28 @@ export default function TaxRulesEditor({ settings, onSave, onReset }: TaxRulesEd
     const next = [...draft.irpefScaglioni];
     next[index] = { ...next[index], [field]: value };
     setDraft({ ...draft, irpefScaglioni: next });
+  }
+
+  function addRegione() {
+    const nome = newRegione.trim();
+    if (!nome || nome in draft.addizionaliRegionali) return;
+    setDraft({
+      ...draft,
+      addizionaliRegionali: { ...draft.addizionaliRegionali, [nome]: newRegioneRate },
+    });
+    setNewRegione("");
+    setNewRegioneRate(0);
+  }
+
+  function addComune() {
+    const nome = newComune.trim();
+    if (!nome || nome in draft.addizionaliComunali) return;
+    setDraft({
+      ...draft,
+      addizionaliComunali: { ...draft.addizionaliComunali, [nome]: newComuneRate },
+    });
+    setNewComune("");
+    setNewComuneRate(0);
   }
 
   return (
@@ -121,6 +147,37 @@ export default function TaxRulesEditor({ settings, onSave, onReset }: TaxRulesEd
               </tbody>
             </table>
           </div>
+          <div className="mt-3 flex flex-wrap items-end gap-2">
+            <label className="block text-sm">
+              <span className="text-slate-600">Nuova regione</span>
+              <input
+                type="text"
+                value={newRegione}
+                onChange={(e) => setNewRegione(e.target.value)}
+                placeholder="Nome regione"
+                className="mt-1.5 w-44 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="text-slate-600">Aliquota (%)</span>
+              <input
+                type="number"
+                step={0.01}
+                value={newRegioneRate}
+                onChange={(e) => setNewRegioneRate(Number(e.target.value) || 0)}
+                className="mt-1.5 w-24 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+              />
+            </label>
+            <button
+              type="button"
+              onClick={addRegione}
+              disabled={!newRegione.trim()}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-700 transition-colors hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Plus className="h-4 w-4" />
+              Aggiungi Regione
+            </button>
+          </div>
         </div>
 
         <div>
@@ -147,6 +204,37 @@ export default function TaxRulesEditor({ settings, onSave, onReset }: TaxRulesEd
               value={draft.aliquotaComunaleDefault}
               onChange={(v) => setDraft({ ...draft, aliquotaComunaleDefault: v })}
             />
+          </div>
+          <div className="mt-3 flex flex-wrap items-end gap-2">
+            <label className="block text-sm">
+              <span className="text-slate-600">Nuovo comune</span>
+              <input
+                type="text"
+                value={newComune}
+                onChange={(e) => setNewComune(e.target.value)}
+                placeholder="Nome comune"
+                className="mt-1.5 w-44 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="text-slate-600">Aliquota (%)</span>
+              <input
+                type="number"
+                step={0.01}
+                value={newComuneRate}
+                onChange={(e) => setNewComuneRate(Number(e.target.value) || 0)}
+                className="mt-1.5 w-24 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+              />
+            </label>
+            <button
+              type="button"
+              onClick={addComune}
+              disabled={!newComune.trim()}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-700 transition-colors hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Plus className="h-4 w-4" />
+              Aggiungi Comune
+            </button>
           </div>
         </div>
 
