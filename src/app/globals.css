@@ -21,7 +21,7 @@ body {
 .app-gradient-backdrop {
   background-image:
     radial-gradient(720px 420px at 8% -8%, rgba(99, 102, 241, 0.14), transparent 60%),
-    radial-gradient(640px 420px at 100% 0%, rgba(139, 92, 246, 0.12), transparent 55%),
+    radial-gradient(640px 190px at 100% 0%, rgba(139, 92, 246, 0.12), transparent 55%),
     radial-gradient(900px 600px at 50% 110%, rgba(16, 185, 129, 0.08), transparent 60%);
 }
 
