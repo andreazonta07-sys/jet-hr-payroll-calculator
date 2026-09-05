@@ -119,8 +119,8 @@ export default function PromoSection() {
   return (
     <section className="space-y-6">
       <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 p-6 text-white shadow-sm sm:p-8">
-        <div className="grid grid-cols-1 items-center gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="mx-auto w-full max-w-[280px] lg:translate-x-10">
+        <div className="grid grid-cols-1 items-center gap-4 lg:grid-cols-[0.55fr_1.45fr]">
+          <div className="w-[30%] min-w-[110px]">
             <ReelPlayer />
           </div>
 

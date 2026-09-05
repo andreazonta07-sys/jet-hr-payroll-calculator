@@ -10,6 +10,7 @@ import RalColumnChart from "@/components/calculator/RalColumnChart";
 import ComparisonChart from "@/components/calculator/ComparisonChart";
 import BreakdownTable from "@/components/calculator/BreakdownTable";
 import PromoSection from "@/components/jethr/PromoSection";
+import JetHrPixelLogo from "@/components/jethr/JetHrPixelLogo";
 import { CheckCircle2 } from "lucide-react";
 
 interface CalculatorViewProps {
@@ -42,7 +43,10 @@ export default function CalculatorView({ initialInput, columnRef, chartRevealed 
       </div>
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[380px_1fr]">
-        <CalculatorForm input={input} onChange={setInput} />
+        <div className="flex flex-col gap-6">
+          <CalculatorForm input={input} onChange={setInput} />
+          <JetHrPixelLogo />
+        </div>
         <div className="space-y-6">
           <MetricsCards result={result} />
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
