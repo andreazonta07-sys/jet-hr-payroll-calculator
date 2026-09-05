@@ -58,26 +58,31 @@ export default function RalColumnChart({ result, revealed = true }: RalColumnCha
                 }}
                 cursor={{ fill: "rgba(79, 70, 229, 0.04)" }}
               />
-              {SEGMENTS.map((seg, i) => (
-                <Bar
-                  key={seg.key}
-                  dataKey={seg.key}
-                  stackId="ral"
-                  fill={seg.color}
-                  radius={i === SEGMENTS.length - 1 ? [10, 10, 0, 0] : 0}
-                  isAnimationActive={false}
-                />
-              ))}
+              {SEGMENTS.map((seg, i) => {
+                let radius: [number, number, number, number] = [0, 0, 0, 0];
+                if (i === SEGMENTS.length - 1) radius = [10, 10, 0, 0];
+                if (i === 0) radius = [radius[0], radius[1], 10, 10];
+                return (
+                  <Bar
+                    key={seg.key}
+                    dataKey={seg.key}
+                    stackId="ral"
+                    fill={seg.color}
+                    radius={radius}
+                    isAnimationActive={false}
+                  />
+                );
+              })}
             </BarChart>
           </ResponsiveContainer>
 
           <div
-            className="pointer-events-none absolute inset-0 overflow-hidden rounded-t-[10px] bg-white"
+            className="pointer-events-none absolute inset-0 overflow-hidden rounded-[10px] bg-white"
             style={{ opacity: revealed ? 0 : 1, transition: `opacity ${OVERLAY_FADE_MS}ms ease-out` }}
           />
         </div>
 
-        <div key={revealed ? "revealed" : "pending"} className="space-y-2">
+        <div key={revealed ? "revealed" : "pending"} className="flex h-full flex-col justify-between gap-2">
           {[...SEGMENTS].reverse().map((seg, i) => {
             const value = result[seg.key];
             return (
