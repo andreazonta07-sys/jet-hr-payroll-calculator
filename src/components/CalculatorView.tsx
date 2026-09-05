@@ -29,7 +29,7 @@ export default function CalculatorView({ initialInput, columnRef, chartRevealed 
 
   return (
     <div className="space-y-8">
-      <div className="animate-fade-in-up">
+      <div className="animate-fade-in-up flex flex-col items-center text-center">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
           <CheckCircle2 className="h-3.5 w-3.5" />
           Calcolo elaborato da Jet HR

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { BookOpenCheck, MessageCircleHeart, Star, Volume2, VolumeX } from "lucide-react";
+import { BookOpenCheck, Volume2, VolumeX } from "lucide-react";
 import EbookModal from "./EbookModal";
 
 /** Personalizza qui l'URL del video/reel di presentazione Jet HR. */
@@ -155,35 +155,7 @@ export default function PromoSection() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <TrustBadge icon={Star} label="Valutazione Clienti" value="4.9/5 ⭐" />
-        <TrustBadge icon={MessageCircleHeart} label="Aziende Gestite" value="500+ 🏢" />
-        <TrustBadge icon={MessageCircleHeart} label="Assistenza HR Dedicata" value="< 5 minuti 💬" />
-      </div>
-
       {modalOpen && <EbookModal onClose={() => setModalOpen(false)} />}
     </section>
-  );
-}
-
-function TrustBadge({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof Star;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-        <Icon className="h-5 w-5" />
-      </div>
-      <div>
-        <p className="text-sm font-semibold text-slate-900">{value}</p>
-        <p className="text-xs text-slate-500">{label}</p>
-      </div>
-    </div>
   );
 }
