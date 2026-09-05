@@ -10,18 +10,7 @@ export const JET_HR_VIDEO_SRC = "/jethr-reel.mp4";
 export const SOCIAL_LINKS = [
   { label: "LinkedIn", href: "https://www.linkedin.com/company/jethr", icon: LinkedinIcon },
   { label: "Instagram", href: "https://www.instagram.com/jethr", icon: InstagramIcon },
-  { label: "YouTube", href: "https://www.youtube.com/@jethr", icon: YoutubeIcon },
-  { label: "X (Twitter)", href: "https://x.com/jethr", icon: XIcon },
-  { label: "Facebook", href: "https://www.facebook.com/jethr", icon: FacebookIcon },
 ];
-
-function XIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-    </svg>
-  );
-}
 
 function LinkedinIcon({ className }: { className?: string }) {
   return (
@@ -37,23 +26,6 @@ function InstagramIcon({ className }: { className?: string }) {
       <rect x="3" y="3" width="18" height="18" rx="5" />
       <circle cx="12" cy="12" r="4" />
       <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-function YoutubeIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-      <path d="M22 12s0-3.2-.41-4.72a2.78 2.78 0 0 0-1.96-1.97C18.13 5 12 5 12 5s-6.13 0-7.63.31A2.78 2.78 0 0 0 2.4 7.28C2 8.8 2 12 2 12s0 3.2.41 4.72a2.78 2.78 0 0 0 1.96 1.97C5.87 19 12 19 12 19s6.13 0 7.63-.31a2.78 2.78 0 0 0 1.96-1.97C22 15.2 22 12 22 12z" />
-      <path d="M10 15.2V8.8L15.5 12z" fill="#fff" />
-    </svg>
-  );
-}
-
-function FacebookIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-      <path d="M13.5 21v-7.5H16l.4-3H13.5V8.4c0-.87.24-1.46 1.5-1.46H16.5V4.3c-.26-.04-1.16-.11-2.2-.11-2.18 0-3.68 1.33-3.68 3.77V10.5H8.2v3h2.42V21h2.88z" />
     </svg>
   );
 }
