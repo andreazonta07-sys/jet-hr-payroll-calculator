@@ -63,7 +63,7 @@ export default function ComparisonChart({ input, settings }: ComparisonChartProp
             <YAxis tickFormatter={(v) => `€${Math.round(v / 1000)}k`} tick={{ fontSize: 12 }} />
             <Tooltip formatter={(value) => formatEuro(Number(value))} />
             <Legend />
-            <Bar dataKey="Netto Annuale" radius={[6, 6, 0, 0]}>
+            <Bar dataKey="Netto Annuale" fill="#4F46E5" radius={[6, 6, 0, 0]}>
               {data.map((d) => (
                 <Cell key={d.name} fill={d.isCurrent ? "#4F46E5" : "#A5B4FC"} />
               ))}

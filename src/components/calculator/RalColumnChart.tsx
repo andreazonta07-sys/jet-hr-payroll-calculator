@@ -86,7 +86,7 @@ export default function RalColumnChart({ result, columnRef, revealed = true }: R
       </p>
 
       <div className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-[180px_1fr]">
-        <div ref={columnRef} className="relative mx-auto h-80 w-full max-w-[180px]">
+        <div ref={columnRef} className="relative mx-auto h-96 w-full max-w-[180px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} barCategoryGap="15%">
               <XAxis dataKey="name" hide />
