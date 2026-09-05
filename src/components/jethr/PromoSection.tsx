@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BookOpenCheck, Volume2, VolumeX } from "lucide-react";
 import EbookModal from "./EbookModal";
 
@@ -65,7 +65,10 @@ function TrustpilotBadge() {
  * garantito ovunque) e la persona può attivare l'audio col tasto speaker,
  * che imposta un volume basso (0.35) invece del 100% di default.
  */
-function ReelPlayer() {
+/** `heightPx` arriva dal genitore, misurata sul blocco di testo affiancato:
+ * null sotto il breakpoint lg (dove il video torna a dimensionarsi da solo
+ * in colonna, in cima al testo). */
+function ReelPlayer({ heightPx }: { heightPx: number | null }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(true);
 
@@ -83,7 +86,10 @@ function ReelPlayer() {
   }
 
   return (
-    <div className="relative mx-auto block aspect-[9/16] w-full max-w-[840px] overflow-hidden rounded-2xl border border-white/20 bg-slate-900 shadow-lg">
+    <div
+      className="relative mx-auto block aspect-[9/16] w-full max-w-[360px] shrink-0 overflow-hidden rounded-2xl border border-white/20 bg-slate-900 shadow-lg lg:mx-0 lg:w-auto lg:max-w-none"
+      style={heightPx != null ? { height: heightPx } : undefined}
+    >
       <video
         ref={videoRef}
         src={JET_HR_VIDEO_SRC}
@@ -95,8 +101,8 @@ function ReelPlayer() {
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-900/10 via-transparent to-slate-900/85" />
 
-      <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6 lg:p-8">
-        <p className="text-sm font-semibold leading-snug text-white sm:text-xl lg:text-2xl">
+      <div className="absolute inset-x-0 bottom-0 p-4">
+        <p className="text-sm font-semibold leading-snug text-white">
           🎥 Come Jet HR abbatte la burocrazia della tua azienda
         </p>
       </div>
@@ -105,43 +111,61 @@ function ReelPlayer() {
         type="button"
         onClick={toggleSound}
         aria-label={muted ? "Attiva audio" : "Disattiva audio"}
-        className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60 sm:right-5 sm:top-5 sm:h-12 sm:w-12 lg:right-6 lg:top-6 lg:h-14 lg:w-14"
+        className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60"
       >
-        {muted ? (
-          <VolumeX className="h-4 w-4 sm:h-6 sm:w-6" />
-        ) : (
-          <Volume2 className="h-4 w-4 sm:h-6 sm:w-6" />
-        )}
+        {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
       </button>
     </div>
   );
 }
 
+/** Tailwind lg: sotto questa soglia il video torna a dimensionarsi da solo. */
+const LG_BREAKPOINT_PX = 1024;
+
 export default function PromoSection() {
   const [modalOpen, setModalOpen] = useState(false);
+  const textRef = useRef<HTMLDivElement>(null);
+  const [videoHeight, setVideoHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    const el = textRef.current;
+    if (!el) return;
+
+    function update() {
+      if (!el) return;
+      setVideoHeight(window.innerWidth >= LG_BREAKPOINT_PX ? el.offsetHeight : null);
+    }
+
+    update();
+    const resizeObserver = new ResizeObserver(update);
+    resizeObserver.observe(el);
+    window.addEventListener("resize", update);
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, []);
 
   return (
     <section className="space-y-6">
       <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 p-6 text-white shadow-sm sm:p-8">
-        <div className="flex flex-wrap items-center justify-center gap-8">
-          <div className="w-full max-w-[840px]">
-            <ReelPlayer />
-          </div>
+        <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-stretch lg:gap-12">
+          <ReelPlayer heightPx={videoHeight} />
 
-          <div className="max-w-xl text-center">
+          <div ref={textRef} className="flex max-w-xl flex-col justify-center text-center lg:text-left">
             <h2 className="text-3xl font-semibold leading-tight sm:text-4xl">
               Libera la tua Azienda dal Peso della Burocrazia
             </h2>
-            <p className="mt-3 text-base leading-relaxed text-indigo-100 sm:text-lg sm:leading-loose">
+            <p className="mt-5 text-base leading-loose text-indigo-100 sm:text-lg">
               Jet HR affianca le imprese italiane con un software payroll e HR pensato per farti
               risparmiare tempo su assunzioni, buste paga e adempimenti: un supporto concreto, non
               solo un tool in più.
             </p>
 
-            <p className="mt-6 text-base font-medium text-indigo-100">
+            <p className="mt-8 text-base font-medium text-indigo-100">
               Scopri come Jet HR risolve la burocrazia della tua azienda
             </p>
-            <div className="mt-3 flex flex-col justify-center gap-3 sm:flex-row">
+            <div className="mt-4 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
               <button
                 type="button"
                 onClick={() => setModalOpen(true)}
@@ -152,7 +176,7 @@ export default function PromoSection() {
               </button>
             </div>
 
-            <div className="mt-3">
+            <div className="mt-5">
               <TrustpilotBadge />
             </div>
           </div>
