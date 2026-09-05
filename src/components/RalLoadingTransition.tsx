@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type RefObject } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { calcolaBustaPaga } from "@/lib/taxEngine";
 import { CalculatorInput } from "@/lib/types";
@@ -8,7 +8,6 @@ import { SEGMENTS } from "@/components/calculator/RalColumnChart";
 
 interface RalLoadingTransitionProps {
   input: CalculatorInput;
-  columnRef: RefObject<HTMLDivElement | null>;
   /** Chiamata appena inizia lo svelamento: il chiamante deve avviare in parallelo
    * il fade-in del contenuto sottostante e far ripartire le sue animazioni interne. */
   onRevealStart: () => void;
@@ -16,7 +15,7 @@ interface RalLoadingTransitionProps {
   onDone: () => void;
 }
 
-type Phase = "filling" | "morphing" | "revealing";
+type Phase = "filling" | "revealing";
 
 const EASE = "cubic-bezier(0.16,1,0.3,1)";
 /** Approssima lo stesso profilo di EASE per le interpolazioni calcolate a mano. */
@@ -24,51 +23,34 @@ function easeOutQuart(t: number) {
   return 1 - Math.pow(1 - t, 4);
 }
 
+const BAR_WIDTH_RATIO = 0.88;
+const BAR_MAX_WIDTH = 1100;
 const BAR_HEIGHT = 130;
 const BAR_RADIUS = 20;
 const FILL_STAGGER_MS = 130;
 const FILL_SEGMENT_MS = 550;
 const FILL_TOTAL_MS = FILL_STAGGER_MS * (SEGMENTS.length - 1) + FILL_SEGMENT_MS;
 const HOLD_MS = 350;
-const MORPH_MS = 1150;
-const EMPTY_MS = 650;
 const OVERLAY_FADE_MS = 480;
-
-interface BarBox {
-  width: number;
-  height: number;
-  cx: number;
-  cy: number;
-  radius: number;
-}
 
 /**
  * Overlay di transizione tra la conferma della RAL e il calcolatore.
  *
- * Tre fasi, ciascuna con un solo scopo — niente è mostrato due volte:
- * 1. filling: una barra orizzontale si riempie con le proporzioni reali della
- *    busta paga — è il progress (0→100%) del "calcolo". Percentuale e larghezza
- *    di ogni segmento sono calcolate nello stesso ciclo requestAnimationFrame
- *    (stessa sorgente di tempo), cosicché non possano mai disallinearsi come
- *    succederebbe mescolando un contatore JS con transition-delay CSS staggerati.
- * 2. morphing: la barra si ridimensiona e si riposiziona (solo width/height/
- *    transform in linea retta, MAI una rotazione) fino a coincidere esattamente
- *    con "La Colonna della RAL" già montata sotto, misurata via
- *    getBoundingClientRect — niente rotate: ruotare mentre si ridimensiona fa
- *    apparire l'ingombro a schermo temporaneamente più grande a metà
- *    transizione (l'inviluppo di un rettangolo che ruota è più largo delle
- *    sue due dimensioni finali), dando l'illusione di "si allarga e poi si
- *    restringe" anche se width/height stanno già rimpicciolendo in parallelo.
- *    In parallelo i segmenti si SVUOTANO: l'unica volta che la colonna si
- *    riempie è quella vera, dentro la pagina (Recharts, rimontato dal
- *    chiamante tramite key al momento del reveal).
- * 3. revealing: il ghost (ormai vuoto) sparisce mentre il contenuto sottostante
- *    fa il proprio fade-in — due transizioni di opacità in parallelo, mai un
- *    salto secco di visibility.
+ * Due fasi:
+ * 1. filling: una barra orizzontale fissa si riempie con le proporzioni reali
+ *    della busta paga — è il progress (0→100%) del "calcolo". Percentuale e
+ *    larghezza di ogni segmento sono calcolate nello stesso ciclo
+ *    requestAnimationFrame (stessa sorgente di tempo), cosicché non possano
+ *    mai disallinearsi come succederebbe mescolando un contatore JS con
+ *    transition-delay CSS staggerati.
+ * 2. revealing: l'intera barra (ancora piena) sparisce con un fade diretto,
+ *    mentre sotto "La Colonna della RAL" (già alla sua dimensione definitiva,
+ *    niente ri-crescita) fa il proprio fade-in in parallelo — niente
+ *    ridimensionamento visibile della barra verso la colonna, che darebbe
+ *    l'illusione di restringersi fino a una lineetta prima di sparire.
  */
 export default function RalLoadingTransition({
   input,
-  columnRef,
   onRevealStart,
   onDone,
 }: RalLoadingTransitionProps) {
@@ -88,13 +70,7 @@ export default function RalLoadingTransition({
   const [segProgress, setSegProgress] = useState<number[]>(() => SEGMENTS.map(() => 0));
   // Lazy initializer: sicuro qui perché questo componente viene istanziato
   // solo lato client, dopo l'interazione dell'utente (mai durante l'SSR).
-  const [barBox, setBarBox] = useState<BarBox>(() => ({
-    width: Math.min(1100, window.innerWidth * 0.88),
-    height: BAR_HEIGHT,
-    cx: window.innerWidth / 2,
-    cy: window.innerHeight * 0.44,
-    radius: BAR_RADIUS,
-  }));
+  const [barWidth] = useState(() => Math.min(BAR_MAX_WIDTH, window.innerWidth * BAR_WIDTH_RATIO));
 
   useEffect(() => {
     const start = performance.now();
@@ -118,54 +94,13 @@ export default function RalLoadingTransition({
     }
     raf = requestAnimationFrame(tick);
 
-    const t1 = window.setTimeout(() => setPhase("morphing"), FILL_TOTAL_MS + HOLD_MS);
+    const t1 = window.setTimeout(() => setPhase("revealing"), FILL_TOTAL_MS + HOLD_MS);
 
     return () => {
       cancelAnimationFrame(raf);
       window.clearTimeout(t1);
     };
   }, []);
-
-  useEffect(() => {
-    if (phase !== "morphing") return;
-
-    // Svuota i segmenti in parallelo alla rotazione (stessa tecnica: un solo
-    // rAF pilota tutti i segmenti insieme), finendo prima che il morph
-    // geometrico atterri, cosicché la forma arrivi già vuota.
-    const emptyStart = performance.now();
-    let rafEmpty = 0;
-    function tickEmpty(now: number) {
-      const t = Math.min(1, (now - emptyStart) / EMPTY_MS);
-      const eased = easeOutQuart(t);
-      setSegProgress(SEGMENTS.map(() => 1 - eased));
-      if (t < 1) rafEmpty = requestAnimationFrame(tickEmpty);
-    }
-    rafEmpty = requestAnimationFrame(tickEmpty);
-
-    const el = columnRef.current;
-    if (!el) {
-      setPhase("revealing");
-      return;
-    }
-    const raf = requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const rect = el.getBoundingClientRect();
-        setBarBox({
-          width: rect.width,
-          height: rect.height,
-          cx: rect.left + rect.width / 2,
-          cy: rect.top + rect.height / 2,
-          radius: 16,
-        });
-      });
-    });
-    const t = window.setTimeout(() => setPhase("revealing"), MORPH_MS + 30);
-    return () => {
-      cancelAnimationFrame(rafEmpty);
-      cancelAnimationFrame(raf);
-      window.clearTimeout(t);
-    };
-  }, [phase, columnRef]);
 
   useEffect(() => {
     if (phase !== "revealing") return;
@@ -206,18 +141,14 @@ export default function RalLoadingTransition({
       <div
         style={{
           position: "fixed",
-          left: 0,
-          top: 0,
-          width: barBox.width,
-          height: barBox.height,
+          left: "50%",
+          top: "44%",
+          width: barWidth,
+          height: BAR_HEIGHT,
           overflow: "hidden",
-          borderRadius: barBox.radius,
+          borderRadius: BAR_RADIUS,
           boxShadow: "0 20px 60px -20px rgba(0,0,0,0.55)",
-          transform: `translate(${barBox.cx}px, ${barBox.cy}px) translate(-50%, -50%)`,
-          transition:
-            phase === "filling"
-              ? "none"
-              : `width ${MORPH_MS}ms ${EASE}, height ${MORPH_MS}ms ${EASE}, transform ${MORPH_MS}ms ${EASE}, border-radius ${MORPH_MS}ms ${EASE}`,
+          transform: "translate(-50%, -50%)",
         }}
       >
         <div className="flex h-full w-full flex-row">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type RefObject } from "react";
+import { useMemo, useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { calcolaBustaPaga } from "@/lib/taxEngine";
 import { CalculatorInput } from "@/lib/types";
@@ -15,13 +15,12 @@ import { CheckCircle2 } from "lucide-react";
 
 interface CalculatorViewProps {
   initialInput: CalculatorInput;
-  columnRef?: RefObject<HTMLDivElement | null>;
-  /** Se false, la colonna RAL resta a zero (in attesa del reveal della
-   * transizione); passare a true fa partire la sua animazione di crescita. */
+  /** Se false, la colonna RAL resta coperta (in attesa del reveal della
+   * transizione); passare a true la rivela già alla sua dimensione definitiva. */
   chartRevealed?: boolean;
 }
 
-export default function CalculatorView({ initialInput, columnRef, chartRevealed }: CalculatorViewProps) {
+export default function CalculatorView({ initialInput, chartRevealed }: CalculatorViewProps) {
   const { settings } = useAppContext();
   const [input, setInput] = useState<CalculatorInput>(initialInput);
 
@@ -50,11 +49,7 @@ export default function CalculatorView({ initialInput, columnRef, chartRevealed 
         <div className="space-y-6">
           <MetricsCards result={result} />
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-            <RalColumnChart
-              result={result}
-              columnRef={columnRef}
-              revealed={chartRevealed ?? true}
-            />
+            <RalColumnChart result={result} revealed={chartRevealed ?? true} />
             <ComparisonChart input={input} settings={settings} />
           </div>
         </div>

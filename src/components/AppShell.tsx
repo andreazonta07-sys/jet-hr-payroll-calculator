@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { AppProvider } from "@/context/AppContext";
 import Header, { ViewMode } from "@/components/Header";
 import CalculatorView from "@/components/CalculatorView";
@@ -31,12 +31,11 @@ export default function AppShell({ startView }: AppShellProps) {
   const [phase, setPhase] = useState<Phase>(startView === "admin" ? "app" : "gate");
   const [initialInput, setInitialInput] = useState<CalculatorInput | null>(null);
   // Il contenuto sotto l'overlay fa un vero fade-in (mai un salto secco di
-  // visibility) e la colonna RAL parte da zero e cresce esattamente quando lo
-  // svelamento inizia, così la sua animazione riparte in sync col resto
-  // invece di essere già consumata mentre era nascosta.
+  // visibility) e la colonna RAL viene rivelata già alla sua dimensione
+  // definitiva esattamente quando lo svelamento inizia, senza rifare una
+  // propria animazione di crescita (già mostrata durante il caricamento).
   const [contentVisible, setContentVisible] = useState(startView === "admin");
   const [chartRevealed, setChartRevealed] = useState(startView === "admin");
-  const columnRef = useRef<HTMLDivElement>(null);
 
   const handleRevealStart = useCallback(() => {
     setContentVisible(true);
@@ -73,7 +72,6 @@ export default function AppShell({ startView }: AppShellProps) {
             {view === "calcolatore" ? (
               <CalculatorView
                 initialInput={initialInput ?? FALLBACK_INPUT}
-                columnRef={columnRef}
                 chartRevealed={chartRevealed}
               />
             ) : (
@@ -89,7 +87,6 @@ export default function AppShell({ startView }: AppShellProps) {
       {phase === "revealing" && initialInput && (
         <RalLoadingTransition
           input={initialInput}
-          columnRef={columnRef}
           onRevealStart={handleRevealStart}
           onDone={handleDone}
         />
