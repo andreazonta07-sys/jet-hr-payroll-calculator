@@ -147,25 +147,22 @@ export default function PromoSection() {
   return (
     <section className="space-y-6">
       <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 p-6 text-white shadow-sm sm:p-8">
-        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="w-full max-w-[280px] mx-auto lg:mx-0">
+        <div className="grid grid-cols-1 items-center gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="mx-auto w-full max-w-[280px] lg:ml-auto lg:mr-0">
             <ReelPlayer />
           </div>
 
           <div>
-            <span className="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-medium">
-              Jet HR — Meno Burocrazia, Più Impresa
-            </span>
-            <h2 className="mt-4 text-2xl font-semibold leading-tight sm:text-3xl">
+            <h2 className="text-3xl font-semibold leading-tight sm:text-4xl">
               Libera la tua Azienda dal Peso della Burocrazia
             </h2>
-            <p className="mt-3 text-sm text-indigo-100 sm:text-base">
+            <p className="mt-3 text-base text-indigo-100 sm:text-lg">
               Jet HR affianca le imprese italiane con un software payroll e HR pensato per farti
               risparmiare tempo su assunzioni, buste paga e adempimenti: un supporto concreto, non
               solo un tool in più.
             </p>
 
-            <p className="mt-6 text-sm font-medium text-indigo-100">
+            <p className="mt-6 text-base font-medium text-indigo-100">
               Scopri come Jet HR risolve la burocrazia della tua azienda
             </p>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row">
