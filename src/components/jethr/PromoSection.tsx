@@ -121,6 +121,9 @@ function ReelPlayer({ heightPx }: { heightPx: number | null }) {
 
 /** Tailwind lg: sotto questa soglia il video torna a dimensionarsi da solo. */
 const LG_BREAKPOINT_PX = 1024;
+/** Il video è il 20% più alto del testo affiancato (a parità di aspect ratio,
+ * anche più largo), che invece resta alla sua dimensione naturale. */
+const VIDEO_HEIGHT_RATIO = 1.2;
 
 export default function PromoSection() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -133,7 +136,7 @@ export default function PromoSection() {
 
     function update() {
       if (!el) return;
-      setVideoHeight(window.innerWidth >= LG_BREAKPOINT_PX ? el.offsetHeight : null);
+      setVideoHeight(window.innerWidth >= LG_BREAKPOINT_PX ? el.offsetHeight * VIDEO_HEIGHT_RATIO : null);
     }
 
     update();
@@ -149,35 +152,42 @@ export default function PromoSection() {
   return (
     <section className="space-y-6">
       <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 p-6 text-white shadow-sm sm:p-8">
-        <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-stretch lg:gap-12">
+        <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-stretch lg:justify-center lg:gap-12">
           <ReelPlayer heightPx={videoHeight} />
 
-          <div ref={textRef} className="flex max-w-xl flex-col justify-center text-center lg:text-left">
-            <h2 className="text-3xl font-semibold leading-tight sm:text-4xl">
-              Libera la tua Azienda dal Peso della Burocrazia
-            </h2>
-            <p className="mt-5 text-base leading-loose text-indigo-100 sm:text-lg">
-              Jet HR affianca le imprese italiane con un software payroll e HR pensato per farti
-              risparmiare tempo su assunzioni, buste paga e adempimenti: un supporto concreto, non
-              solo un tool in più.
-            </p>
+          <div className="flex flex-col justify-center">
+            {/* Dimensione naturale, mai stretchata dalla riga: è la misura di
+             * riferimento per l'altezza del video. Se il ref fosse su un
+             * contenitore stretchato dal flex della riga, la sua altezza
+             * dipenderebbe da quella del video che dipende da questa altezza
+             * — un ciclo che fa crescere il riquadro all'infinito. */}
+            <div ref={textRef} className="max-w-xl text-center lg:text-left">
+              <h2 className="text-3xl font-semibold leading-tight sm:text-4xl">
+                Libera la tua Azienda dal Peso della Burocrazia
+              </h2>
+              <p className="mt-5 text-base leading-loose text-indigo-100 sm:text-lg">
+                Jet HR affianca le imprese italiane con un software payroll e HR pensato per farti
+                risparmiare tempo su assunzioni, buste paga e adempimenti: un supporto concreto, non
+                solo un tool in più.
+              </p>
 
-            <p className="mt-8 text-base font-medium text-indigo-100">
-              Scopri come Jet HR risolve la burocrazia della tua azienda
-            </p>
-            <div className="mt-4 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
-              <button
-                type="button"
-                onClick={() => setModalOpen(true)}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-indigo-700 shadow-lg shadow-indigo-900/30 transition-transform hover:scale-[1.02]"
-              >
-                <BookOpenCheck className="h-4 w-4" />
-                Scarica l&apos;Ebook Gratuito: Guida al Cuneo Fiscale
-              </button>
-            </div>
+              <p className="mt-8 text-base font-medium text-indigo-100">
+                Scopri come Jet HR risolve la burocrazia della tua azienda
+              </p>
+              <div className="mt-4 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(true)}
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-indigo-700 shadow-lg shadow-indigo-900/30 transition-transform hover:scale-[1.02]"
+                >
+                  <BookOpenCheck className="h-4 w-4" />
+                  Scarica l&apos;Ebook Gratuito: Guida al Cuneo Fiscale
+                </button>
+              </div>
 
-            <div className="mt-5">
-              <TrustpilotBadge />
+              <div className="mt-5">
+                <TrustpilotBadge />
+              </div>
             </div>
           </div>
         </div>
